@@ -1,18 +1,17 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const { explainCodeChunkwise, rewriteCodeFiles, optimizeCodeFiles } = require('./geminiService'); // Import Gemini service methods
-
+import express from 'express';
+import { explainCodeChunkwise, rewriteCodeFiles, optimizeCodeFiles } from './geminiService.js';
+import cors from 'cors';
 const app = express();
-const PORT = 5000;
-const cors = require('cors');
+const PORT = process.env.PORT || 5000;
+
 app.use(cors())
-// Middleware to parse JSON requests
-app.use(bodyParser.json());
+app.use(express.json());
+
 
 // API route to explain code chunkwise
 app.post('/api/code/explain', async (req, res) => {
     const { htmlCode, cssCode, jsCode } = req.body;
-
+    // console.log(htmlCode,cssCode,jsCode)
     try {
         const explanation = await explainCodeChunkwise(htmlCode, cssCode, jsCode);
         res.json({ explanation });
@@ -21,6 +20,7 @@ app.post('/api/code/explain', async (req, res) => {
         res.status(500).json({ message: 'Failed to explain code' });
     }
 });
+
 
 // API route to rewrite the code for all three files
 app.post('/api/code/rewrite', async (req, res) => {

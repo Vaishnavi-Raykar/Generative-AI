@@ -63,9 +63,14 @@
 
 import React, { useState } from 'react';
 import axios from 'axios';
+import ReactMarkdown from 'react-markdown';
+import gfm from 'remark-gfm';
+import Markdown from 'markdown-to-jsx';
+import remarkGfm from 'remark-gfm';
+
 
 const CodeFeatures = ({ htmlCode, cssCode, jsCode }) => {
-    const [explanation, setExplanation] = useState('');
+    const [explanation, setExplanation] = useState("");
     const [rewrittenCode, setRewrittenCode] = useState('');
     const [optimizedCode, setOptimizedCode] = useState('');
 
@@ -74,13 +79,22 @@ const CodeFeatures = ({ htmlCode, cssCode, jsCode }) => {
     const handleExplainCode = async () => {
         try {
             // const response = await axios.post('http://localhost:5000/api/code/explain', { code: combinedCode });
-            const response = await axios.post('http://localhost:5000/api/code/explain', {
-                htmlCode,
-                cssCode,
-                jsCode,
-            });
-            
+            const response = await axios.post('http://localhost:5000/api/code/explain', 
+                {
+                    htmlCode, 
+                    cssCode, 
+                    jsCode
+                }, 
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+                
+            console.log(response)
             setExplanation(response.data.explanation);
+            setRewrittenCode(''); // Clear rewrittenCode
+            setOptimizedCode('');
         } catch (error) {
             console.error('Error explaining code:', error);
         }
@@ -88,8 +102,21 @@ const CodeFeatures = ({ htmlCode, cssCode, jsCode }) => {
 
     const handleRewriteCode = async () => {
         try {
-            const response = await axios.post('http://localhost:5000/api/code/rewrite', { code: combinedCode });
+            const response = await axios.post('http://localhost:5000/api/code/rewrite', 
+                {
+                    htmlCode, 
+                    cssCode, 
+                    jsCode
+                }, 
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+                console.log("rewrite - "+response.response)
             setRewrittenCode(response.data.rewrittenCode);
+            setExplanation(''); // Clear explanation
+            setOptimizedCode('');
         } catch (error) {
             console.error('Error rewriting code:', error);
         }
@@ -97,8 +124,20 @@ const CodeFeatures = ({ htmlCode, cssCode, jsCode }) => {
 
     const handleOptimizeCode = async () => {
         try {
-            const response = await axios.post('http://localhost:5000/api/code/optimize', { code: combinedCode });
+            const response = await axios.post('http://localhost:5000/api/code/optimize', 
+                {
+                    htmlCode, 
+                    cssCode, 
+                    jsCode
+                }, 
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
             setOptimizedCode(response.data.optimizedCode);
+            setExplanation(''); // Clear explanation
+            setRewrittenCode('');
         } catch (error) {
             console.error('Error optimizing code:', error);
         }
@@ -119,12 +158,14 @@ const CodeFeatures = ({ htmlCode, cssCode, jsCode }) => {
             </div>
 
             <div className="results mt-4">
-                {explanation && (
-                    <div className="explanation bg-gray-700 p-2 rounded mb-2">
-                        <h3 className="font-bold">Explanation:</h3>
-                        <p>{explanation}</p>
-                    </div>
-                )}
+            {explanation && (
+                <div className="explanation bg-gray-700 p-4 rounded mb-2">
+                    <h3 className="font-bold text-white">Explanation:</h3>
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                        {explanation}
+                    </ReactMarkdown>
+                </div>
+            )}
                 {rewrittenCode && (
                     <div className="rewritten bg-gray-700 p-2 rounded mb-2">
                         <h3 className="font-bold">Rewritten Code:</h3>
