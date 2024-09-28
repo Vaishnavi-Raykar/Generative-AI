@@ -61,20 +61,37 @@
 
 
 
-import React, { useState } from 'react';
+import React, { useContext,useState } from 'react';
 import axios from 'axios';
-import ReactMarkdown from 'react-markdown';
-import gfm from 'remark-gfm';
-import Markdown from 'markdown-to-jsx';
-import remarkGfm from 'remark-gfm';
+import { CodeContext } from './CodeContext';
 
 
-const CodeFeatures = ({ htmlCode, cssCode, jsCode }) => {
-    const [explanation, setExplanation] = useState("");
-    const [rewrittenCode, setRewrittenCode] = useState('');
-    const [optimizedCode, setOptimizedCode] = useState('');
-
+const CodeFeatures = ({ htmlCode, cssCode, jsCode ,setCssCode,setHtmlCode,setJsCode}) => {
+    
+    // const [explanation, setExplanation] = useState("");
+    // const [rewrittenCode, setRewrittenCode] = useState('');
+    // const [optimizedCode, setOptimizedCode] = useState('');
+    const {
+        explanation,
+        setExplanation,
+        rewrittenCode,
+        setRewrittenCode,
+        optimizedCode,
+        setOptimizedCode,
+      } = useContext(CodeContext);
     const combinedCode = `${htmlCode}\n${cssCode}\n${jsCode}`;
+
+    const handleHtmlChange = (newHtmlCode) => {
+        setHtmlCode(newHtmlCode);
+      };
+    
+      const handleCssChange = (newCssCode) => {
+        setCssCode(newCssCode);
+      };
+    
+      const handleJsChange = (newJsCode) => {
+        setJsCode(newJsCode);
+      };
 
     const handleExplainCode = async () => {
         try {
@@ -100,6 +117,19 @@ const CodeFeatures = ({ htmlCode, cssCode, jsCode }) => {
         }
     };
 
+    const extractCodeSnippets = (markdown) => {
+        const htmlMatch = markdown.match(/```html\s*([\s\S]*?)```/);
+        const cssMatch = markdown.match(/```css\s*([\s\S]*?)```/);
+        const jsMatch = markdown.match(/```javascript\s*([\s\S]*?)```/);
+    
+        // Store the extracted code in variables
+        const htmlCode = htmlMatch ? htmlMatch[1].trim() : '';
+        const cssCode = cssMatch ? cssMatch[1].trim() : '';
+        const jsCode = jsMatch ? jsMatch[1].trim() : '';
+    
+        return { htmlCode, cssCode, jsCode };
+    };
+
     const handleRewriteCode = async () => {
         try {
             const response = await axios.post('http://localhost:5000/api/code/rewrite', 
@@ -113,10 +143,15 @@ const CodeFeatures = ({ htmlCode, cssCode, jsCode }) => {
                         'Content-Type': 'application/json',
                     },
                 });
-                console.log("rewrite - "+response.response)
+                console.log("response.data")
             setRewrittenCode(response.data.rewrittenCode);
             setExplanation(''); // Clear explanation
             setOptimizedCode('');
+            const data = extractCodeSnippets(response.data.rewrittenCode)
+            // console.log(data.htmlCode)
+            handleHtmlChange(data.htmlCode)
+            handleCssChange(data.cssCode)
+            handleJsChange(data.jsCode)
         } catch (error) {
             console.error('Error rewriting code:', error);
         }
@@ -138,13 +173,18 @@ const CodeFeatures = ({ htmlCode, cssCode, jsCode }) => {
             setOptimizedCode(response.data.optimizedCode);
             setExplanation(''); // Clear explanation
             setRewrittenCode('');
+            const data = extractCodeSnippets(response.data.optimizedCode)
+            // console.log(data.htmlCode)
+            handleHtmlChange(data.htmlCode)
+            handleCssChange(data.cssCode)
+            handleJsChange(data.jsCode)
         } catch (error) {
             console.error('Error optimizing code:', error);
         }
     };
 
     return (
-        <div className="code-features p-4 bg-gray-800">
+        <div className="code-features p-4 bg-gray-800 mt-1">
             <div className="flex gap-4">
                 <button onClick={handleExplainCode} className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded">
                     Explain Code
@@ -157,28 +197,8 @@ const CodeFeatures = ({ htmlCode, cssCode, jsCode }) => {
                 </button>
             </div>
 
-            <div className="results mt-4">
-            {explanation && (
-                <div className="explanation bg-gray-700 p-4 rounded mb-2">
-                    <h3 className="font-bold text-white">Explanation:</h3>
-                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                        {explanation}
-                    </ReactMarkdown>
-                </div>
-            )}
-                {rewrittenCode && (
-                    <div className="rewritten bg-gray-700 p-2 rounded mb-2">
-                        <h3 className="font-bold">Rewritten Code:</h3>
-                        <pre>{rewrittenCode}</pre>
-                    </div>
-                )}
-                {optimizedCode && (
-                    <div className="optimized bg-gray-700 p-2 rounded">
-                        <h3 className="font-bold">Optimized Code:</h3>
-                        <pre>{optimizedCode}</pre>
-                    </div>
-                )}
-            </div>
+
+
         </div>
     );
 };

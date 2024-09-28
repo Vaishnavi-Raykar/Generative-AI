@@ -46,15 +46,13 @@ ${jsCode}
 
 // Function to rewrite the code for HTML, CSS, and JS files
 const rewriteCodeFiles = async (htmlCode, cssCode, jsCode) => {
-    const prompt = `Analyze the provided HTML, CSS, and JavaScript code and rewrite it using best practices in programming. Ensure the logic remains the same but improve the code by incorporating modern, clean, and efficient practices. This includes:
+    const prompt = `Analyze the provided HTML, CSS, and JavaScript code and rewrite it using best practices in programming. Ensure the logic and variable names remain the same, and split the HTML, CSS, and JavaScript into three distinct blocks (one for each). The code should follow these guidelines:
 
-    1. Improving readability and organization.
-    2. Refactoring code to follow proper semantic conventions.
-    3. Optimizing CSS and JavaScript where applicable.
-    4. Removing unnecessary code, redundancies, or anti-patterns.
-    5. Applying modern JavaScript syntax (ES6+), if needed.
-    
-    Please maintain the functionality and logic of the original code.
+Add comments to clarify key parts of the code.
+Improve readability and organization by proper indentation and structuring.
+Refactor code to follow semantic conventions where applicable (e.g., using appropriate tags and structure in HTML).
+Maintain variable and function names as they are, ensuring the code remains recognizable but clean.
+Do not optimize the code logic or structure beyond these basic improvements.
     
     HTML CODE:
     ${htmlCode}
@@ -72,7 +70,7 @@ const rewriteCodeFiles = async (htmlCode, cssCode, jsCode) => {
 // Function to optimize the code for HTML, CSS, and JS files
 const optimizeCodeFiles = async (htmlCode, cssCode, jsCode) => {
     const prompt = `Rewrite the provided HTML, CSS, and JavaScript code, optimizing it for both time complexity and space complexity. Consider reducing redundant logic, minimizing DOM manipulation, improving JavaScript algorithms, and streamlining CSS. 
-    Break down your improvements by explaining how each change affects performance, scalability, or maintainability, and include relevant trade-offs. Use Markdown with headings, code blocks, and clear explanations.
+    Generate three distinct blocks: one for HTML, one for CSS, and one for JavaScript. As you go through each block of code, add comments that explain the improvements you are making. In these comments, make sure to discuss how each change affects performance, scalability, or maintainability, and also mention any relevant trade-offs
     Please maintain the functionality and logic of the original code.
     Provided code:
     HTML CODE:
