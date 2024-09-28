@@ -17,7 +17,7 @@ export const CodeProvider = ({ children }) => {
         rewrittenCode,
         setRewrittenCode,
         optimizedCode,
-        setOptimizedCode,
+        setOptimizedCode
       }}
     >
       {children}
