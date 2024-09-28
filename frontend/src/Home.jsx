@@ -1,7 +1,7 @@
 // LandingPage.js
 import React from 'react';
 import { Link } from 'react-router-dom';
-
+console.log(process.env.REACT_APP_Backend)
 const LandingPage = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">

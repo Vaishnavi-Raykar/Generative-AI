@@ -2,6 +2,9 @@ import React, { useContext, useState } from "react";
 import axios from "axios";
 import { CodeContext } from "./CodeContext";
 import SpeechToText from "./Voice";
+const backend_url = process.env.REACT_APP_Backend
+
+
 
 const CodeFeatures = ({
   htmlCode,
@@ -37,7 +40,7 @@ const CodeFeatures = ({
     try {
       // const response = await axios.post('http://localhost:5000/api/code/explain', { code: combinedCode });
       const response = await axios.post(
-        "http://localhost:5000/api/code/explain",
+        `${backend_url}/api/code/explain`,
         {
           htmlCode,
           cssCode,
@@ -75,7 +78,7 @@ const CodeFeatures = ({
   const handleRewriteCode = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/code/rewrite",
+        `${backend_url}/api/code/rewrite`,
         {
           htmlCode,
           cssCode,
@@ -104,7 +107,7 @@ const CodeFeatures = ({
   const handleOptimizeCode = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/code/optimize",
+        `${backend_url}/api/code/optimize`,
         {
           htmlCode,
           cssCode,

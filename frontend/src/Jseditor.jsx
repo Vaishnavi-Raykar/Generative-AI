@@ -15,6 +15,7 @@ import CodeFeatures from "./CodeFeatures"; // Import the new CodeFeatures compon
 import { CodeProvider } from "./CodeContext";
 import ResultsComponent from "./Codeoutput";
 import CodeFeaturesJS from "./CodeFeaturesJs";
+const backend_url = process.env.REACT_APP_Backend
 
 function Jseditor() {
 
@@ -180,7 +181,7 @@ console.log("Series - "+result);
 
             try {
               const response = await axios.post(
-                "http://localhost:5000/api/code/cssredesign",
+                `${backend_url}/api/code/cssredesign`,
                 formData,
                 {
                   headers: {

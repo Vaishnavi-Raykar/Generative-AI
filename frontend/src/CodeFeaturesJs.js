@@ -1,6 +1,7 @@
 import React, { useContext, useState } from "react";
 import axios from "axios";
 import { CodeContext } from "./CodeContext";
+const backend_url = process.env.REACT_APP_Backend
 
 const CodeFeaturesJS = ({ jsCode, setJsCode }) => {
   // const [explanation, setExplanation] = useState("");
@@ -23,7 +24,7 @@ const CodeFeaturesJS = ({ jsCode, setJsCode }) => {
   const handleExplainCode = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/code/js/explain",
+        `${backend_url}/api/code/js/explain`,
         {
           jsCode,
         },
@@ -54,7 +55,7 @@ const CodeFeaturesJS = ({ jsCode, setJsCode }) => {
   const handleRewriteCode = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/code/js/rewrite",
+        `${backend_url}/api/code/js/rewrite`,
         {
           jsCode,
         },
@@ -79,7 +80,7 @@ const CodeFeaturesJS = ({ jsCode, setJsCode }) => {
   const handleOptimizeCode = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/code/js/optimize",
+        `${backend_url}/api/code/js/optimize`,
         {
           jsCode,
         },

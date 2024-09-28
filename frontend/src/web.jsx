@@ -15,6 +15,7 @@ import {
 import CodeFeatures from "./CodeFeatures"; // Import the new CodeFeatures component
 import { CodeProvider } from "./CodeContext";
 import ResultsComponent from "./Codeoutput";
+const backend_url = process.env.REACT_APP_Backend
 
 function Web() {
 
@@ -149,7 +150,7 @@ button:hover {
 
                         try {
                             const response = await axios.post(
-                                "http://localhost:5000/api/code/cssredesign",
+                                `${backend_url}/api/code/cssredesign`,
                                 formData,
                                 {
                                     headers: {
