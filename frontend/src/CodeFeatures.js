@@ -4,8 +4,6 @@ import { CodeContext } from "./CodeContext";
 import SpeechToText from "./Voice";
 const backend_url = process.env.REACT_APP_Backend
 
-
-
 const CodeFeatures = ({
   htmlCode,
   cssCode,
@@ -22,7 +20,8 @@ const CodeFeatures = ({
     optimizedCode,
     setOptimizedCode
   } = useContext(CodeContext);
-  const combinedCode = `${htmlCode}\n${cssCode}\n${jsCode}`;
+
+const combinedCode = `${htmlCode}\n${cssCode}\n${jsCode}`;
 
   const handleHtmlChange = (newHtmlCode) => {
     setHtmlCode(newHtmlCode);

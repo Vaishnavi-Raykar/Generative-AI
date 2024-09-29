@@ -22,8 +22,7 @@ function Web() {
     const [activeTab, setActiveTab] = useState("html");
     const [livePreview, setLivePreview] = useState(false);
     const [isRunning, setIsRunning] = useState(false);
-    const htmlDefault = `<!DOCTYPE html>
-<html lang="en">
+    const htmlDefault = `<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

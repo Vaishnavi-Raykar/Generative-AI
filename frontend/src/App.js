@@ -437,11 +437,12 @@
 // }
 
 // export default App;
-import React from 'react';
+import React, { useContext, useState } from "react";
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import Jseditor from './Jseditor'; // Import your Jseditor component
 import Web from './web';
 import LandingPage from './Home';
+// import { CodeProvider } from "./CodeContext";
 
 function App() {
   return (
