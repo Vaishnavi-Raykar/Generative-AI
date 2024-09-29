@@ -15,10 +15,9 @@ import CodeFeatures from "./CodeFeatures"; // Import the new CodeFeatures compon
 import { CodeProvider } from "./CodeContext";
 import ResultsComponent from "./Codeoutput";
 import CodeFeaturesJS from "./CodeFeaturesJs";
-const backend_url = process.env.REACT_APP_Backend
+const backend_url = process.env.REACT_APP_Backend;
 
 function Jseditor() {
-
   const runCode = () => {
     try {
       // Use Function constructor to run the code and capture console logs
@@ -26,13 +25,13 @@ function Jseditor() {
       const originalLog = console.log;
 
       console.log = (...args) => {
-        consoleLog.push(args.join(' '));
+        consoleLog.push(args.join(" "));
       };
 
       // Create a new function and run the code
       const run = new Function(jsCode);
       run();
-      setOutput(consoleLog.join('\n'));
+      setOutput(consoleLog.join("\n"));
     } catch (error) {
       setOutput(error.toString());
     }
@@ -209,7 +208,6 @@ console.log("Series - "+result);
     };
   };
 
-
   useEffect(() => {
     function hideError(e) {
       if (
@@ -245,10 +243,8 @@ console.log("Series - "+result);
     }
   }, [jsCode, isRunning]);
 
-
-
   const updateOutput = () => {
-    runCode()
+    runCode();
   };
 
   const resetEditor = () => {
@@ -278,10 +274,9 @@ console.log("Series - "+result);
   const handleRunButtonClick = () => {
     if (isRunning) {
       setIsRunning(false);
-
     } else {
       setIsRunning(true);
-      runCode()
+      runCode();
     }
   };
 
@@ -292,8 +287,9 @@ console.log("Series - "+result);
           <div className="flex gap-4 p-2">
             <button
               onClick={() => setActiveTab("js")}
-              className={`flex items-center ${activeTab === "js" ? "bg-blue-600" : "bg-gray-700"
-                } hover:bg-gray-600 px-3 rounded`}
+              className={`flex items-center ${
+                activeTab === "js" ? "bg-blue-600" : "bg-gray-700"
+              } hover:bg-gray-600 px-3 rounded`}
             >
               <FaJs className="mr-2" /> JavaScript
             </button>
@@ -302,10 +298,11 @@ console.log("Series - "+result);
           <div className="run-btn-container p-2">
             <button
               onClick={handleRunButtonClick}
-              className={`px-4 py-2 rounded flex items-center ${isRunning
-                ? "bg-red-500 hover:bg-red-600"
-                : "bg-green-500 hover:bg-green-600"
-                }`}
+              className={`px-4 py-2 rounded flex items-center ${
+                isRunning
+                  ? "bg-red-500 hover:bg-red-600"
+                  : "bg-green-500 hover:bg-green-600"
+              }`}
             >
               {isRunning ? (
                 <FaStop className="mr-2" />
@@ -354,12 +351,11 @@ console.log("Series - "+result);
             id="output"
             className="output flex-grow border-none p-8"
             title="Output"
-          >{output}</div>
+          >
+            {output}
+          </div>
         </div>
-        <CodeFeaturesJS
-          jsCode={jsCode}
-          setJsCode={setJsCode}
-        />
+        <CodeFeaturesJS jsCode={jsCode} setJsCode={setJsCode} />
       </div>
       <ResultsComponent />
       <div id="output-container"></div>

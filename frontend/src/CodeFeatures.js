@@ -154,7 +154,15 @@ const combinedCode = `${htmlCode}\n${cssCode}\n${jsCode}`;
         </button>
       </div>
 
-      <SpeechToText />
+      <SpeechToText 
+  htmlCode={htmlCode}
+  cssCode={cssCode}
+  jsCode={jsCode}
+  setHtmlCode={setHtmlCode}
+  setCssCode={setCssCode}
+  setJsCode={setJsCode}
+/>
+
     </div>
   );
 };

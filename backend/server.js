@@ -6,7 +6,7 @@ import {
   rewriteCodeFilesjs,
   optimizeCodeFiles,
   optimizeCodeFilesjs,
-  solutionCodeFilesjs
+  solutionCodeFilesjs,
 } from "./geminiService.js";
 import cors from "cors";
 const app = express();
@@ -100,10 +100,10 @@ app.post("/api/code/js/optimize", async (req, res) => {
   }
 });
 app.post("/api/code/js/quiz/submit", async (req, res) => {
-  const { jsCode ,output } = req.body;
+  const { jsCode, output } = req.body;
 
   try {
-    const solutionCode = await solutionCodeFilesjs(jsCode,output);
+    const solutionCode = await solutionCodeFilesjs(jsCode, output);
     res.json({ solutionCode });
   } catch (error) {
     console.error("Error optimizing code:", error.message);
@@ -136,7 +136,82 @@ app.post(
           HTML code:\n${htmlCode}\n
           CSS code:\n${cssCode}`;
 
-    // const prompt = `what you see in image`
+      // const prompt = `what you see in image`
+      const image = {
+        inlineData: {
+          data: screenshot.buffer.toString("base64"),
+          mimeType: "image/png",
+        },
+      };
+
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+      const result = await model.generateContent([prompt, image]);
+      const responseText = result.response.text(); // Assuming the API returns a text response
+      console.log(responseText);
+
+      res.json({
+        message: "Data sent to Gemini API successfully",
+        response: responseText,
+      });
+    } catch (error) {
+      console.error("Error processing request:", error);
+
+      // If error has field violations, print those details
+      if (
+        error.errorDetails &&
+        error.errorDetails[0] &&
+        error.errorDetails[0].fieldViolations
+      ) {
+        console.error(
+          "Field Violations: ",
+          error.errorDetails[0].fieldViolations
+        );
+      }
+
+      res
+        .status(500)
+        .json({ message: "Internal server error", error: error.message });
+    }
+  }
+);
+app.post(
+  "/api/code/imgtocode",
+  upload.single("screenshot"),
+  async (req, res) => {
+    try {
+      const promptuser = req.body.prompt;
+      const screenshot = req.file; // Access the uploaded screenshot as a Buffer
+
+      // Check if the uploaded file is a PNG
+      if (!screenshot || screenshot.mimetype !== "image/png") {
+        return res.status(400).json({ message: "Please upload a PNG image." });
+      }
+
+      const prompt = `Convert the following image into HTML, CSS, and JavaScript code:  1. **Structure:**  - Break down the visual elements of the photo into well-structured HTML elements such as "<div>", "<section>", "<header>", "<footer>", "<button>", etc.
+  - Ensure the code is semantically correct and well-organized using meaningful tags (e.g., "<article>" for content, "<nav>" for navigation).
+   - Add classes or IDs to each element for CSS styling.
+
+2. **CSS Styling:** 
+   - Extract precise colors (e.g., background, text, borders) and use accurate color codes (e.g., "#000000" for black, "#ffffff" for white).
+   - Capture all font details, including font family, font size, weight, line height, and letter spacing. Ensure responsiveness across different screen sizes.
+   - Specify margins, padding, and alignment for each element. Handle layouts with "flexbox" or "grid" for flexible and modern design.
+   - Handle shadows, gradients, borders, and hover effects if present in the image.
+   - Maintain pixel-perfect accuracy in terms of spacing, alignments, and positioning.
+   
+3. **JavaScript:** 
+   - Implement basic interactivity (e.g., button clicks, form handling, modal pop-ups) if visible in the image.
+   - Add any necessary animations or transitions, such as hover effects, slide-ins, or fade-ins.
+   - Capture event listeners (e.g., for buttons, form submissions) and add comments for clarity.
+
+4. **Accessibility & Optimization:**
+   - Ensure the code is accessible, with proper use of "alt" attributes for images, "aria" labels for interactive elements, and readable contrast ratios for text.
+   - Add media queries for responsive design and optimize the layout for mobile devices.
+   - Keep the JavaScript code efficient and well-commented.
+
+5. **User Prompt Details:**
+   - Include the following specific request provided by the user if provided.: "${promptuser}".
+`;
+
       const image = {
         inlineData: {
           data: screenshot.buffer.toString("base64"),

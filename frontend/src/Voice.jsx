@@ -7,7 +7,17 @@ import { MdCancel } from "react-icons/md";
 import { FaFileUpload } from "react-icons/fa"; // New icon for image upload
 import { BsSend } from "react-icons/bs"; // Send button icon
 
-const SpeechToText = () => {
+import axios from "axios";
+const backend_url = process.env.REACT_APP_Backend
+
+const SpeechToText = ({ 
+  htmlCode, 
+  cssCode, 
+  jsCode, 
+  setHtmlCode, 
+  setCssCode, 
+  setJsCode 
+}) => {
   const {
     transcript,
     listening,
@@ -18,6 +28,7 @@ const SpeechToText = () => {
   const [inputText, setInputText] = useState("");
   const [imageText, setImageText] = useState("");
   const [uploadedImage, setUploadedImage] = useState(null);
+  const [uploadedImageurl, setUploadedImageurl] = useState(null);
   const [savedTranscript, setSavedTranscript] = useState(""); // New state to save the transcript
 
   if (!browserSupportsSpeechRecognition) {
@@ -28,12 +39,68 @@ const SpeechToText = () => {
     setInputText(e.target.value);
   };
 
+
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setUploadedImage(URL.createObjectURL(file));
+      setUploadedImage(file); // Set the file (not URL) to use in the API call
+      setUploadedImageurl(URL.createObjectURL(file));
     }
   };
+  
+  const extractCodeSnippets = (markdown) => {
+    const htmlMatch = markdown.match(/```html\s*([\s\S]*?)```/);
+    const cssMatch = markdown.match(/```css\s*([\s\S]*?)```/);
+    const jsMatch = markdown.match(/```javascript\s*([\s\S]*?)```/);
+
+    // Store the extracted code in variables
+    const htmlCode = htmlMatch ? htmlMatch[1].trim() : "";
+    const cssCode = cssMatch ? cssMatch[1].trim() : "";
+    const jsCode = jsMatch ? jsMatch[1].trim() : "";
+
+    return { htmlCode, cssCode, jsCode };
+  };
+
+  const sendImageToApi = async () => {
+    try {
+      if (!uploadedImage) {
+        console.log("No image to upload");
+        return;
+      }
+  
+      const formData = new FormData();
+      
+      // Append the necessary fields to formData
+      formData.append("prompt", inputText); 
+      formData.append("screenshot", uploadedImage, uploadedImage.name || "screenshot.png"); // Ensure 'uploadedImage' is a valid File
+      
+      // Make the API request
+      const response = await axios.post(
+        `${backend_url}/api/code/imgtocode`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      const datafromback = response.data.response;
+      const data = extractCodeSnippets(datafromback);
+      setHtmlCode(data.htmlCode)
+      setCssCode(data.cssCode)
+      setJsCode(data.jsCode)
+      // Handle the response
+      if (response.status === 200) {
+        console.log("Image and code successfully sent to the API:", response.data);
+
+      } else {
+        console.log("Failed to send image and code:", response.status);
+      }
+    } catch (error) {
+      console.error("Error uploading the image:", error);
+    }
+  };
+
 
   const handleStartListening = () => {
     setSavedTranscript((prev) => prev + " " + transcript);
@@ -91,7 +158,7 @@ const SpeechToText = () => {
         {uploadedImage && (
           <div className="absolute top-2 left-2 w-16 h-16 bg-gray-200 border border-gray-300 rounded-md overflow-hidden flex items-center justify-center">
             <img
-              src={uploadedImage}
+              src={uploadedImageurl}
               alt="Uploaded"
               className="w-full h-full object-cover"
             />
@@ -125,7 +192,7 @@ const SpeechToText = () => {
       {/* Send Button */}
       <div className="flex flex-col items-center gap-2">
         <button
-          onClick={handleSendData}
+          onClick={sendImageToApi}
           className="flex items-center space-x-2 bg-green-500 text-white p-2 rounded-md hover:bg-green-600"
         >
           <BsSend size={24} />
