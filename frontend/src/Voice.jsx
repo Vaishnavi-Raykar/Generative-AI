@@ -153,7 +153,7 @@ const SpeechToText = ({
           placeholder="Type here or speak to fill this area..."
           style={{ paddingLeft: uploadedImage ? "80px" : "16px" }}
         />
-
+        
         {/* Uploaded Image Inside Text Area (Top Left) */}
         {uploadedImage && (
           <div className="absolute top-2 left-2 w-16 h-16 bg-gray-200 border border-gray-300 rounded-md overflow-hidden flex items-center justify-center">
@@ -179,6 +179,7 @@ const SpeechToText = ({
           className="flex items-center space-x-2 bg-blue-600 p-2 rounded-md cursor-pointer hover:bg-blue-700"
         >
           <FaFileUpload size={24} />
+          <p>Upload PNG only</p>
         </label>
         <input
           id="imageUpload"
