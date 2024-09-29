@@ -4,11 +4,6 @@ import { CodeContext } from "./CodeContext";
 const backend_url = process.env.REACT_APP_Backend
 
 const CodeFeaturesJS = ({ jsCode, setJsCode }) => {
-  // const [explanation, setExplanation] = useState("");
-  // const [rewrittenCode, setRewrittenCode] = useState('');
-  
-  // const [optimizedCode, setOptimizedCode] = useState('');
-//   const [opticode, setopticode] = useState();
   const {
     explanation,
     setExplanation,

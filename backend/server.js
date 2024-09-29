@@ -5,7 +5,8 @@ import {
   rewriteCodeFiles,
   rewriteCodeFilesjs,
   optimizeCodeFiles,
-  optimizeCodeFilesjs
+  optimizeCodeFilesjs,
+  solutionCodeFilesjs
 } from "./geminiService.js";
 import cors from "cors";
 const app = express();
@@ -93,6 +94,17 @@ app.post("/api/code/js/optimize", async (req, res) => {
   try {
     const optimizedCode = await optimizeCodeFilesjs(jsCode);
     res.json({ optimizedCode });
+  } catch (error) {
+    console.error("Error optimizing code:", error.message);
+    res.status(500).json({ message: "Failed to optimize code" });
+  }
+});
+app.post("/api/code/js/quiz/submit", async (req, res) => {
+  const { jsCode ,output } = req.body;
+
+  try {
+    const solutionCode = await solutionCodeFilesjs(jsCode,output);
+    res.json({ solutionCode });
   } catch (error) {
     console.error("Error optimizing code:", error.message);
     res.status(500).json({ message: "Failed to optimize code" });

@@ -114,6 +114,24 @@ const optimizeCodeFilesjs = async (jsCode) => {
 ${jsCode}`;
   return await makeGeminiRequest(prompt);
 };
+const solutionCodeFilesjs = async (jsCode,output) => {
+  const prompt = `### Question & Code - 
+${jsCode}
+
+### Expected Output - 
+${output}
+
+### Requirements for the solution:
+1. First, verify if the provided code produces the correct output for the given question.
+   - If the code is correct, provide both time complexity (TC) and space complexity (SC) of the code.
+   - Suggest a more optimized solution if applicable, explaining why it’s more efficient.
+
+2. If the code is incorrect:
+   - Return a new corrected code version.
+   - Point out mistakes in the user's code with short comments inside the code (explaining what went wrong).
+   - After fixing the code, give a more optimized solution (if possible) and explain why the new approach is better in terms of efficiency.`;
+  return await makeGeminiRequest(prompt);
+};
 
 export {
   explainCodeChunkwise,
@@ -122,4 +140,5 @@ export {
   explainCodeChunkwisejs,
   rewriteCodeFilesjs,
   optimizeCodeFilesjs,
+  solutionCodeFilesjs
 };

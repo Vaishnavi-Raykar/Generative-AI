@@ -23,6 +23,7 @@
     "react-simple-code-editor": "^0.14.1",
     "react-speech-recognition": "^3.10.0",
     "react-use-clipboard": "^1.0.9",
+    "tesseract.js": "^5.1.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

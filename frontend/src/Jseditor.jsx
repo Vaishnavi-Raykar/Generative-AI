@@ -243,8 +243,8 @@ console.log("Series - "+result);
     } else {
       console.log("Conditions not met for running code");
     }
-  }, [jsCode,isRunning]);
-  
+  }, [jsCode, isRunning]);
+
 
 
   const updateOutput = () => {
@@ -278,7 +278,7 @@ console.log("Series - "+result);
   const handleRunButtonClick = () => {
     if (isRunning) {
       setIsRunning(false);
-      
+
     } else {
       setIsRunning(true);
       runCode()
