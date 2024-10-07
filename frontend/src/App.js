@@ -4,6 +4,7 @@ import Jseditor from "./Jseditor"; // Import your Jseditor component
 import Web from "./web";
 import LandingPage from "./Home";
 import Jsquiz from "./Jsquiz";
+import Cppeditor from "./Cppeditor";
 // import { CodeProvider } from "./CodeContext";
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
           <Route path="/js" element={<Jseditor />} />
           <Route path="/" element={<LandingPage />} />
           <Route path="/js/quiz" element={<Jsquiz />} />
+          <Route path="/cpp" element={<Cppeditor/>} />
         </Routes>
       </div>
     </Router>

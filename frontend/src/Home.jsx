@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { FaJs, FaGlobe, FaGithub } from 'react-icons/fa'; // Importing icons
+import { PiFileCppBold } from "react-icons/pi";
 
 const LandingPage = () => {
   return (
@@ -24,6 +25,11 @@ const LandingPage = () => {
           <Link to="/web">
             <button className="flex items-center px-5 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300 shadow-lg">
               <FaGlobe className="mr-2" /> Go to Web Development
+            </button>
+          </Link>
+          <Link to="/cpp">
+            <button className="flex items-center px-5 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition duration-300 shadow-lg">
+              <PiFileCppBold className="mr-2" /> Go to C++
             </button>
           </Link>
         </div>

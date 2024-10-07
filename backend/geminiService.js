@@ -50,6 +50,14 @@ const explainCodeChunkwisejs = async (jsCode) => {
   `;
   return await makeGeminiRequest(prompt);
 };
+const explainCodeChunkwisecpp = async (Cppcode) => {
+  const prompt = `Analyze the provided C++ code. Break down the explanation into sections, explaining each part individually. Identify the purpose, logic, and key details of each code block. Use Markdown with headings, code blocks, and clear explanations.
+
+  CPP CODE:
+  ${Cppcode}
+  `;
+  return await makeGeminiRequest(prompt);
+};
 
 // Function to rewrite the code for HTML, CSS, and JS files
 const rewriteCodeFiles = async (htmlCode, cssCode, jsCode) => {
@@ -85,6 +93,18 @@ JS CODE: ${jsCode}`;
 
   return await makeGeminiRequest(prompt);
 };
+const rewriteCodeFilescpp = async (Cppcode) => {
+  const prompt = `Analyze the provided C++ code and rewrite it using best practices in programming. Ensure the logic and variable names remain the same. The code should follow these guidelines:
+
+Add comments to clarify key parts of the code.
+Improve readability and organization by proper indentation and structuring.
+Refactor code to follow conventions and clean coding practices.
+Maintain variable and function names as they are, ensuring the code remains recognizable but clean.
+
+CPP CODE: ${Cppcode}`;
+
+  return await makeGeminiRequest(prompt);
+};
 
 // Function to optimize the code for HTML, CSS, and JS files
 const optimizeCodeFiles = async (htmlCode, cssCode, jsCode) => {
@@ -114,6 +134,14 @@ const optimizeCodeFilesjs = async (jsCode) => {
 ${jsCode}`;
   return await makeGeminiRequest(prompt);
 };
+const optimizeCodeFilescpp = async (Cppcode) => {
+  const prompt = `Rewrite the provided C++ code, optimizing it for both time complexity and space complexity. Consider reducing redundant logic, improving algorithms, and minimizing memory usage. As you review the code, add comments that explain the improvements you're making. In these comments, discuss how each change affects performance, scalability, or maintainability, and mention any relevant trade-offs. Please maintain the functionality and logic of the original code.
+
+  CPP CODE:
+${Cppcode}`;
+  return await makeGeminiRequest(prompt);
+};
+
 const solutionCodeFilesjs = async (jsCode,output) => {
   const prompt = `### Question & Code - 
 ${jsCode}
@@ -140,5 +168,8 @@ export {
   explainCodeChunkwisejs,
   rewriteCodeFilesjs,
   optimizeCodeFilesjs,
-  solutionCodeFilesjs
+  solutionCodeFilesjs,
+  explainCodeChunkwisecpp,
+  rewriteCodeFilescpp,
+  optimizeCodeFilescpp
 };
