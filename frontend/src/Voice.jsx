@@ -129,7 +129,7 @@ const SpeechToText = ({
   };
 
   return (
-    <div className="p-5 flex justify-center items-center w-full max-w-2xl mx-auto gap-4  rounded-lg shadow-md">
+    <div className="flex justify-center items-center w-full max-w-2xl mx-auto gap-4  rounded-lg ">
       {/* Microphone and Status */}
       <div className="flex justify-center items-center gap-3">
         <button
@@ -148,7 +148,7 @@ const SpeechToText = ({
         <textarea
           className="w-full h-20 p-3 border text-black border-gray-300 rounded-md focus:outline-none focus:border-blue-500 resize-none"
           rows="6"
-          value={inputText || savedTranscript + " " + transcript + " " + imageText}
+          value={inputText !== "" ? inputText : (savedTranscript + transcript + imageText).trim() === "" ? "" : savedTranscript + " " + transcript + " " + imageText}
           onChange={handleInputChange}
           placeholder="Type here or speak to fill this area..."
           style={{ paddingLeft: uploadedImage ? "80px" : "16px" }}
