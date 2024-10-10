@@ -12,28 +12,49 @@ const backend_url = process.env.REACT_APP_Backend;
 
 function Jsquiz() {
   const runCode = () => {
-    try {
-      // Use Function constructor to run the code and capture console logs
-      const consoleLog = [];
-      const originalLog = console.log;
+    if (editorlang == "javascript") {
+      try {
+        // Use Function constructor to run the code and capture console logs
+        const consoleLog = [];
+        const originalLog = console.log;
 
-      console.log = (...args) => {
-        consoleLog.push(args.join(" "));
-      };
+        console.log = (...args) => {
+          consoleLog.push(args.join(" "));
+        };
 
-      // Create a new function and run the code
-      const run = new Function(jsCode);
-      run();
-      setOutput(consoleLog.join("\n"));
-    } catch (error) {
-      setOutput(error.toString());
+        // Create a new function and run the code
+        const run = new Function(jsCode);
+        run();
+        setOutput(consoleLog.join("\n"));
+      } catch (error) {
+        setOutput(error.toString());
+      }
+    } else {
+      axios
+        .post(`${backend_url}/cpp/compile`, {
+          code: jsCode,
+          language: "cpp",
+          input: userInput,
+        })
+        .then((res) => {
+          setOutput(res.data.stdout || res.data.stderr);
+        })
+        .catch((err) => {
+          console.error(err);
+          setOutput(
+            "Error: " + (err.response ? err.response.data.error : err.message)
+          );
+        });
     }
   };
 
   const [activeTab, setActiveTab] = useState("js");
+
+  const [userInput, setUserInput] = useState("");
   const [output, setOutput] = useState("");
   const [isRunning, setIsRunning] = useState(false);
   const [jsCode, setJsCode] = useState("loading");
+  const [editorlang, seteditorlang] = useState("javascript");
   const [difficulty, setDifficulty] = useState("easy");
   const [remainingTime, setRemainingTime] = useState(0);
   const [isTimerRunning, setIsTimerRunning] = useState(false);
@@ -177,10 +198,10 @@ function Jsquiz() {
     };
   }, []);
 
-
-
   const getRandomQuestion = (difficulty, questions) => {
-    const filteredQuestions = questions.filter(q => q.difficulty === difficulty);
+    const filteredQuestions = questions.filter(
+      (q) => q.difficulty === difficulty
+    );
     const randomIndex = Math.floor(Math.random() * filteredQuestions.length);
     return filteredQuestions[randomIndex];
   };
@@ -203,11 +224,10 @@ function Jsquiz() {
   //   setRemainingTime(timeInSeconds);
   // }, []);
 
-
   useEffect(() => {
     const selectedQuestion = getRandomQuestion(difficulty, questions);
     setJsCode(selectedQuestion.question);
-  
+
     // Set time based on difficulty
     let timeInSeconds;
     if (selectedQuestion.difficulty === "easy") {
@@ -219,9 +239,11 @@ function Jsquiz() {
     }
     setRemainingTime(timeInSeconds);
   }, [difficulty]);
-  
 
   const startTimer = () => {
+    if(isTimerRunning==true){
+      return
+    }
     setIsTimerRunning(true);
     const timerInterval = setInterval(() => {
       setRemainingTime((prevTime) => {
@@ -294,22 +316,41 @@ function Jsquiz() {
     }
   };
 
+ 
+
+  // Function to handle running code
   const handleRunButtonClick = () => {
     if (isRunning) {
-      setIsRunning(false);
+      setIsRunning(false); // Stop running if already running
     } else {
-      setIsRunning(true);
-      runCode();
+      setIsRunning(true); // Start running
+      runCode(); // Run the code
+      setIsRunning(false); // Stop running after executing
     }
   };
-
   return (
     <CodeProvider>
       <div className="App flex flex-col h-screen bg-gray-900 text-white">
-        
-
         <div className="top-tabs w-full flex justify-between space-x-2 p-2 bg-gray-800 shadow-lg rounded-lg">
           <div className="flex items-center gap-4 p-2">
+            <select
+              value={editorlang}
+              onChange={(e) => seteditorlang(e.target.value)}
+              className="p-2 bg-gray-800 rounded-lg shadow-md text-white"
+            >
+              <option value="javascript">Javascript</option>
+              <option value="cpp">C++</option>
+            </select>
+            <select
+              value={difficulty}
+              onChange={(e) => setDifficulty(e.target.value)}
+              className="p-2 bg-gray-800 rounded-lg shadow-md text-white"
+            >
+              <option value="easy">Easy</option>
+              <option value="medium">Medium</option>
+              <option value="hard">Hard</option>
+            </select>
+
             <button
               onClick={startTimer}
               className={`flex items-center px-4 py-2 rounded font-semibold ${
@@ -318,25 +359,33 @@ function Jsquiz() {
                   : "bg-gray-700 text-gray-300 hover:bg-gray-600"
               } transition duration-200`}
             >
-              <FaPlay className="mr-2 " /> JS Quiz
+              <FaPlay className="mr-2 " /> Start
             </button>
+
             <div className="flex gap-4">
-              <p className="text-lg font-semibold text-yellow-400">
-                Level : {difficulty}
-              </p>
               <p className="text-lg font-semibold text-red-400">
                 Time Left : {formatTime(remainingTime)}
               </p>
             </div>
-
-            {/* <button
-      onClick={startTimer}
-      className="bg-green-500 hover:bg-green-600 px-4 py-2 rounded-lg text-white font-semibold transition duration-200 shadow-md"
-      disabled={isTimerRunning || remainingTime === 0}
-    >
-      Start
-    </button> */}
           </div>
+
+          {/* <div className="run-btn-container p-2">
+            <button
+              onClick={handleRunButtonClick}
+              className={`px-4 py-2 rounded font-semibold shadow-md flex items-center ${
+                isRunning
+                  ? "bg-red-500 hover:bg-red-600"
+                  : "bg-green-500 hover:bg-green-600"
+              } text-white transition duration-200`}
+            >
+              {isRunning ? (
+                <FaStop className="mr-2" />
+              ) : (
+                <FaPlay className="mr-2" />
+              )}
+              {isRunning ? "Stop" : "Run Code"}
+            </button>
+          </div> */}
 
           <div className="run-btn-container p-2">
             <button
@@ -355,15 +404,6 @@ function Jsquiz() {
               {isRunning ? "Stop" : "Run Code"}
             </button>
           </div>
-          <select
-  value={difficulty}
-  onChange={(e) => setDifficulty(e.target.value)}
-  className="p-2 bg-gray-800 rounded-lg shadow-md text-white"
->
-  <option value="easy">Easy</option>
-  <option value="medium">Medium</option>
-  <option value="hard">Hard</option>
-</select>
 
           <div className="toolbar flex gap-4 p-2">
             <button
@@ -387,7 +427,7 @@ function Jsquiz() {
               <div className="overlay rounded-md overflow-hidden w-full h-full shadow-4xl">
                 <Editor
                   className="w-full h-full bg-gray-800 text-white border border-gray-600 p-2 rounded"
-                  language="javascript"
+                  language={editorlang}
                   value={jsCode}
                   defaultValue=""
                   theme="vs-dark"
@@ -396,14 +436,30 @@ function Jsquiz() {
               </div>
             )}
           </div>
+          {editorlang == "cpp" && (
+            <div
+              id="output-container"
+              className="output-container flex-grow border-none p-8 flex flex-col relative h-full"
+              title="Output"
+            >
+              {/* Scrollable Output Display */}
+              <div className="output-display bg-gray-900 text-white p-4 rounded overflow-auto flex-grow">
+                <h3 className="font-bold">Output</h3>
+                <pre>{output}</pre>
+              </div>
 
-          <div
-            id="output"
-            className="output flex-grow border-none p-8"
-            title="Output"
-          >
-            {output}
-          </div>
+              {/* Fixed User Input Section */}
+              <div className="user-input bg-gray-800 text-white p-4 rounded w-full absolute bottom-0 left-0">
+                <h3 className="font-bold">User Input</h3>
+                <textarea
+                  className="w-full h-20 p-2 bg-gray-700 text-white rounded"
+                  value={userInput} // Make sure to define 'userInput' in your state
+                  onChange={(e) => setUserInput(e.target.value)} // Update state on input
+                  placeholder="Enter your input here"
+                />
+              </div>
+            </div>
+          )}
         </div>
         <CodeFeaturesJSQuiz
           jsCode={jsCode}

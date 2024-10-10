@@ -20,7 +20,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 const PORT = process.env.PORT || 5000;
 
 app.use(cors({
-  origin: 'https://gencodex.vercel.app', // Allow requests from your Vercel app
+  origin: ['https://gencodex.vercel.app','http://localhost:3000'], // Allow requests from your Vercel app
   methods: 'GET, POST, PUT, DELETE, OPTIONS', // Allowed HTTP methods
   credentials: true // Allow sending cookies, if needed
 }));
